@@ -1,0 +1,180 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>University Biology Learning System — MVP</title>
+<style>
+  :root{--bg:#f4f6f8;--card:#fff;--accent:#1f6feb;--muted:#606f7b}
+  body{font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;margin:0;background:var(--bg);color:#0b1220}
+  header{background:linear-gradient(90deg,#fff,#f8fafc);padding:18px 28px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 1px 4px rgba(2,6,23,0.06)}
+  .container{max-width:1100px;margin:24px auto;padding:0 16px}
+  .grid{display:grid;grid-template-columns:2fr 1fr;gap:18px}
+  .card{background:var(--card);padding:16px;border-radius:8px;box-shadow:0 1px 6px rgba(2,6,23,0.04)}
+  h1{margin:0;font-size:20px}
+  h3{margin:0 0 8px 0}
+  .lesson{padding:10px;border-left:4px solid var(--accent);background:linear-gradient(180deg,#fff,#fbfdff);margin-bottom:10px;border-radius:6px}
+  button{background:var(--accent);color:white;border:none;padding:8px 12px;border-radius:6px;cursor:pointer}
+  .small{font-size:13px;color:var(--muted)}
+  .q{margin-bottom:12px}
+  @media(max-width:900px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>University Biology Learning System — MVP (English)</h1>
+    <div class="small">Static demo for GitHub Pages — single-choice quizzes</div>
+  </div>
+  <div class="small">Offline-ready · Drop into GitHub Pages</div>
+</header>
+
+<div class="container">
+  <div class="grid">
+    <div>
+      <div class="card" id="courseCard">
+        <h3 id="courseTitle">Loading course...</h3>
+        <div id="courseDesc" class="small" style="margin-bottom:12px"></div>
+        <div id="modules"></div>
+      </div>
+
+      <div class="card" id="lessonCard" style="display:none">
+        <h3 id="lessonTitle"></h3>
+        <div id="lessonContent" class="small" style="margin-top:8px"></div>
+        <div style="margin-top:12px">
+          <button onclick="startQuiz()">Start Quiz</button>
+          <button onclick="backToCourse()" style="margin-left:8px;background:#6b7280">Back to Course</button>
+        </div>
+        <div id="quizArea" style="margin-top:12px"></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card">
+        <h4>Quick Navigation</h4>
+        <div style="margin-bottom:8px"><label>Switch course: </label>
+          <select id="courseSelect" onchange="loadCourseByIndex(this.value)"></select>
+        </div>
+        <div style="margin-top:8px">
+          <button onclick="openJSON()">Open sample JSON</button>
+        </div>
+      </div>
+
+      <div class="card small" style="margin-top:12px">
+        <h4>How to use</h4>
+        <ol>
+          <li>Edit <code>course.json</code> to change lessons and quizzes.</li>
+          <li>Quizzes here are single-choice only. For backend scoring, integrate a server.</li>
+          <li>To publish, push files to GitHub and enable Pages.</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+async function loadJSON(){
+  try{
+    const resp = await fetch('course.json');
+    return await resp.json();
+  }catch(e){
+    console.error('Failed to load course.json', e);
+    return null;
+  }
+}
+
+let APP = { data:null, courseIdx:0, lessonIdx:0 };
+
+function renderCourse(){
+  const data = APP.data;
+  if(!data) return;
+  const courses = data.courses || [];
+  document.getElementById('courseSelect').innerHTML = courses.map((c,i)=>`<option value="${i}">${c.title}</option>`).join('');
+  loadCourseByIndex(0);
+}
+
+function loadCourseByIndex(i){
+  APP.courseIdx = Number(i);
+  const course = APP.data.courses[APP.courseIdx];
+  document.getElementById('courseTitle').textContent = course.title;
+  document.getElementById('courseDesc').textContent = course.description;
+  const modulesDiv = document.getElementById('modules');
+  modulesDiv.innerHTML = '';
+  course.modules.forEach((m,mi)=>{
+    const mdiv = document.createElement('div');
+    mdiv.className = 'card';
+    mdiv.innerHTML = `<h4>${m.title}</h4><div class="small">${m.description || ''}</div>`;
+    m.lessons.forEach((l,li)=>{
+      const ld = document.createElement('div');
+      ld.className = 'lesson';
+      ld.innerHTML = `<strong>${l.title}</strong><div class="small">${l.summary || ''}</div>
+                      <div style="margin-top:8px"><button onclick="openLesson(${mi},${li})">Open</button></div>`;
+      mdiv.appendChild(ld);
+    });
+    modulesDiv.appendChild(mdiv);
+  });
+}
+
+function openLesson(mi,li){
+  APP.lessonIdx = li;
+  const lesson = APP.data.courses[APP.courseIdx].modules[mi].lessons[li];
+  document.getElementById('lessonTitle').textContent = lesson.title;
+  document.getElementById('lessonContent').innerHTML = `<p>${lesson.content || ''}</p>`;
+  document.getElementById('courseCard').style.display='none';
+  document.getElementById('lessonCard').style.display='block';
+  document.getElementById('quizArea').innerHTML = '';
+}
+
+function backToCourse(){
+  document.getElementById('courseCard').style.display='block';
+  document.getElementById('lessonCard').style.display='none';
+}
+
+function startQuiz(){
+  const lesson = APP.data.courses[APP.courseIdx].modules[0].lessons[APP.lessonIdx];
+  const quizId = lesson.quiz_id;
+  const quiz = APP.data.quizzes.find(q=>q.id===quizId);
+  if(!quiz){ alert('No quiz for this lesson'); return; }
+  renderQuiz(quiz);
+}
+
+function renderQuiz(quiz){
+  const area = document.getElementById('quizArea');
+  area.innerHTML = '<h4>'+quiz.title+'</h4>';
+  quiz.questions.forEach((q,qi)=>{
+    const qdiv = document.createElement('div');
+    qdiv.className='q';
+    qdiv.innerHTML = `<div><strong>Q${qi+1}.</strong> ${q.stem}</div>`;
+    q.options.forEach((opt,oi)=>{
+      qdiv.innerHTML += `<div><label><input name="q${qi}" type="radio" value="${oi}" /> ${opt}</label></div>`;
+    });
+    area.appendChild(qdiv);
+  });
+  area.innerHTML += '<div style="margin-top:8px"><button onclick="gradeQuiz()">Submit</button></div>';
+}
+
+function gradeQuiz(){
+  const quizEl = document.getElementById('quizArea');
+  const inputs = quizEl.querySelectorAll('input[type=radio]:checked');
+  let score = 0;
+  const quizId = APP.data.courses[APP.courseIdx].modules[0].lessons[APP.lessonIdx].quiz_id;
+  const quiz = APP.data.quizzes.find(q=>q.id===quizId);
+  if(!quiz){ alert('No quiz'); return; }
+  quiz.questions.forEach((q,qi)=>{
+    const sel = quizEl.querySelector('input[name="q'+qi+'"]:checked');
+    const answer = q.answer && q.answer[0];
+    if(sel && Number(sel.value) === answer) score += 1;
+  });
+  alert('Your score: ' + score + ' / ' + quiz.questions.length + '\nNote: This demo stores nothing (local scoring only).');
+}
+
+loadJSON().then(d=>{
+  APP.data = d;
+  renderCourse();
+});
+
+function openJSON(){ window.open('course.json','_blank'); }
+</script>
+</body>
+</html>

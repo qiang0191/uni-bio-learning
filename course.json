@@ -1,0 +1,158 @@
+{
+  "courses": [
+    {
+      "id": "bio101",
+      "title": "Introduction to Biology",
+      "description": "Foundational undergraduate course covering cell biology, genetics, evolution, microbiology and lab basics.",
+      "modules": [
+        {
+          "id": "m0",
+          "title": "Prerequisites & Diagnostic",
+          "description": "Chemistry basics and microscope usage",
+          "lessons": [
+            {
+              "id": "l0",
+              "title": "Chemistry Refresher",
+              "summary": "Atoms, bonds, pH basics",
+              "content": "Short video: basic chemistry concepts (placeholder)",
+              "quiz_id": "q0"
+            },
+            {
+              "id": "l1",
+              "title": "Microscope Basics",
+              "summary": "Parts of a light microscope and usage",
+              "content": "Interactive microscope demo (placeholder)",
+              "quiz_id": null
+            }
+          ]
+        },
+        {
+          "id": "m1",
+          "title": "Cell and Molecular Biology",
+          "description": "Cell structures, transcription, translation.",
+          "lessons": [
+            {
+              "id": "l2",
+              "title": "Cell Structure",
+              "summary": "Organelles and functions",
+              "content": "Lesson text: overview of organelles",
+              "quiz_id": "q1"
+            },
+            {
+              "id": "l3",
+              "title": "Protein Synthesis",
+              "summary": "Transcription and translation",
+              "content": "Lesson text: transcription and translation overview",
+              "quiz_id": "q2"
+            }
+          ]
+        },
+        {
+          "id": "m2",
+          "title": "Genetics",
+          "description": "Mendelian genetics and DNA basics",
+          "lessons": [
+            {
+              "id": "l4",
+              "title": "Mendelian Inheritance",
+              "summary": "Basic crosses and Punnett squares",
+              "content": "Lesson text: Mendel experiments",
+              "quiz_id": "q3"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "quizzes": [
+    {
+      "id": "q0",
+      "title": "Diagnostic Quiz (Sample)",
+      "questions": [
+        {
+          "type": "single",
+          "stem": "What is the basic unit of life?",
+          "options": [
+            "Atom",
+            "Molecule",
+            "Cell",
+            "Organ"
+          ],
+          "answer": [
+            2
+          ]
+        },
+        {
+          "type": "single",
+          "stem": "Which base is found in RNA but not in DNA?",
+          "options": [
+            "Adenine",
+            "Thymine",
+            "Guanine",
+            "Uracil"
+          ],
+          "answer": [
+            3
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q1",
+      "title": "Cell Structure Quiz",
+      "questions": [
+        {
+          "type": "single",
+          "stem": "Which organelle is the powerhouse of the cell?",
+          "options": [
+            "Nucleus",
+            "Mitochondrion",
+            "Ribosome",
+            "Golgi apparatus"
+          ],
+          "answer": [
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q2",
+      "title": "Protein Synthesis Quiz",
+      "questions": [
+        {
+          "type": "single",
+          "stem": "Where does translation occur in the cell?",
+          "options": [
+            "Nucleus",
+            "Ribosome",
+            "Endoplasmic reticulum",
+            "Lysosome"
+          ],
+          "answer": [
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q3",
+      "title": "Mendelian Genetics Quiz",
+      "questions": [
+        {
+          "type": "single",
+          "stem": "If two heterozygous (Aa) parents mate, what is the expected genotype ratio?",
+          "options": [
+            "1 AA : 2 Aa : 1 aa",
+            "3 AA : 0 Aa : 1 aa",
+            "All AA",
+            "All aa"
+          ],
+          "answer": [
+            0
+          ]
+        }
+      ]
+    }
+  ]
+}
